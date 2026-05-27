@@ -1,0 +1,38 @@
+# Claude Code local settings
+.claude/
+
+# Dependencies
+node_modules/
+
+# Build outputs
+out/
+dist/
+
+# electron-vite dev artifacts
+.vite/
+
+# electron-store data (user preferences, stored locally)
+# Uncomment if you want to ignore app data:
+# app-data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# TypeScript cache
+*.tsbuildinfo

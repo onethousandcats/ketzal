@@ -1,0 +1,761 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Base reset & layout
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   App shell
+   ============================================================ */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--bg-app);
+}
+
+/* ============================================================
+   Toolbar — Scalar-style: minimal, nearly invisible
+   ============================================================ */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 38px;
+  background: var(--bg-toolbar);
+  /* No heavy border — just a 1px hairline at most */
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  user-select: none;
+  /* Stacking context: keeps dropdown above mosaic windows */
+  position: relative;
+  z-index: 100;
+  /* Allow Electron window drag from toolbar area */
+  -webkit-app-region: drag;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  -webkit-app-region: no-drag;
+}
+
+.app-name {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-right: 12px;
+  opacity: 0.7;
+}
+
+/* Plain text buttons — no borders, no backgrounds */
+.toolbar-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  transition: color 0.1s, background 0.1s;
+  -webkit-app-region: no-drag;
+}
+
+.toolbar-btn:hover {
+  color: var(--text-primary);
+  background: var(--border);
+}
+
+/* ============================================================
+   Frameless window controls (min / max / close)
+   ============================================================ */
+
+.wc-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: filter 0.1s;
+  -webkit-app-region: no-drag;
+  padding: 0;
+}
+
+.wc-btn:hover { filter: brightness(0.8); }
+
+.wc-minimize { background: #f5a623; }
+.wc-maximize { background: #27c93f; }
+.wc-close    { background: #ff5f57; }
+
+/* ============================================================
+   Hamburger menu
+   ============================================================ */
+
+.hm-wrapper {
+  position: relative;
+  -webkit-app-region: no-drag;
+}
+
+/* Three-bar → × button */
+.hm-trigger {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 5px;
+  transition: background 0.1s;
+  flex-shrink: 0;
+}
+
+.hm-trigger:hover {
+  background: var(--border);
+}
+
+.hm-trigger span {
+  display: block;
+  width: 14px;
+  height: 1.5px;
+  background: var(--text-secondary);
+  border-radius: 2px;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+  transform-origin: center;
+}
+
+.hm-trigger--open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+.hm-trigger--open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hm-trigger--open span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+/* Dropdown panel */
+.hm-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 210px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-panel-hover);
+  padding: 8px 0;
+  z-index: 9999;
+  animation: hm-in 0.12s ease;
+  /* Panel extends below the toolbar drag region — must opt out explicitly */
+  -webkit-app-region: no-drag;
+}
+
+@keyframes hm-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.hm-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: 6px 14px 4px;
+  opacity: 0.6;
+}
+
+.hm-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-primary);
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.08s;
+}
+
+.hm-row:hover { background: var(--border); }
+.hm-row--active { color: var(--accent); }
+
+.hm-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 0.5px solid rgba(0,0,0,0.1);
+}
+
+.hm-row-label { flex: 1; }
+
+.hm-tick {
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.hm-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+
+/* Background section */
+.hm-bg-preview {
+  margin: 0 14px 8px;
+  height: 64px;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.hm-bg-btns {
+  display: flex;
+  gap: 6px;
+  padding: 0 14px 4px;
+}
+
+.hm-action-btn {
+  flex: 1;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 6px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+
+.hm-action-btn:hover { opacity: 0.85; }
+
+.hm-action-btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.hm-action-btn--ghost:hover {
+  opacity: 1;
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   Background image (when data-bg is set on <html>)
+   Body gets the image directly; app layers above must be transparent.
+   ============================================================ */
+
+:root[data-bg] .app-container,
+:root[data-bg] .mosaic,
+:root[data-bg] .mosaic-root {
+  background: transparent !important;
+}
+
+/* Frosted-glass toolbar over any background image */
+:root[data-bg] .toolbar {
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+}
+
+:root[data-theme="light"][data-bg]      .toolbar { background: rgba(240,240,240,0.6); }
+:root[data-theme="dark"][data-bg]       .toolbar { background: rgba(28,28,31,0.7); }
+:root[data-theme="solarized"][data-bg]  .toolbar { background: rgba(232,225,204,0.65); }
+:root[data-theme="light-blue"][data-bg] .toolbar { background: rgba(214,233,248,0.65); }
+:root[data-theme="lime-green"][data-bg] .toolbar { background: rgba(232,244,204,0.65); }
+
+/* ============================================================
+   Mosaic container
+   ============================================================ */
+
+.mosaic-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 38px;
+}
+
+/* ============================================================
+   Empty state
+   ============================================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 8px;
+}
+
+.empty-state-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.empty-state-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0.4;
+}
+
+/* ============================================================
+   Widget pane
+   ============================================================ */
+
+.widget-pane {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.widget-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px;
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+  color: var(--text-secondary);
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* ============================================================
+   Terminal pane — full bleed, Hyper-style
+   ============================================================ */
+
+.terminal-pane {
+  width: 100%;
+  height: 100%;
+  background: var(--terminal-bg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* xterm internal scroll */
+.terminal-pane .xterm-viewport {
+  overflow-y: auto;
+}
+
+/* Give the terminal a bit of breathing room */
+.terminal-pane .xterm-screen {
+  padding: 6px 10px;
+}
+
+/* ============================================================
+   Pane header — macOS-style minimal chrome
+   ============================================================ */
+
+.pane-header {
+  flex: 1;               /* fill the 22px toolbar wrapper */
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  background: var(--bg-panel);
+  cursor: grab;
+  position: relative;
+  user-select: none;
+}
+
+/* Close dot — macOS red circle */
+.pane-close {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #ff5f56;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.1s;
+  /* Don't inherit the grab cursor */
+  cursor: pointer;
+  /* Prevent mosaic drag from triggering on close btn */
+  -webkit-app-region: no-drag;
+}
+
+/* Show ✕ glyph only when the whole pane window is hovered */
+.pane-close::before {
+  content: '×';
+  font-size: 9px;
+  line-height: 1;
+  color: rgba(100, 0, 0, 0.7);
+  opacity: 0;
+  transition: opacity 0.1s;
+  pointer-events: none;
+}
+
+.mosaic-window:hover .pane-close::before {
+  opacity: 1;
+}
+
+/* Hyper-style title — always visible, centered, monospace */
+.pane-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Cascadia Code", "Cascadia Mono", "Fira Code", Consolas, monospace;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  opacity: 0.55;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 60%;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   react-mosaic overrides — floating windows
+   ============================================================ */
+
+.mosaic,
+.mosaic-root {
+  background: var(--bg-app) !important;
+  height: 100% !important;
+}
+
+/* Gap between floating tiles */
+.mosaic-tile {
+  margin: 7px !important;
+}
+
+/* The floating card itself */
+.mosaic-window {
+  background: var(--bg-panel) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  border: none !important;
+  box-shadow: var(--shadow-panel) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: box-shadow 0.2s !important;
+}
+
+.mosaic-window:hover {
+  box-shadow: var(--shadow-panel-hover) !important;
+}
+
+/* react-mosaic injects .mosaic-window-toolbar as the drag-source wrapper.
+   Keep it as a real box so the drag hit-area works, but make it invisible
+   and defer all visual chrome to .pane-header inside it. */
+.mosaic-window > .mosaic-window-toolbar {
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: none !important;
+  display: flex !important;
+  align-items: stretch !important;
+  flex-shrink: 0 !important;
+}
+
+.mosaic-window-body {
+  flex: 1 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: transparent !important;
+}
+
+/* Resize splitter — invisible until hovered */
+.mosaic-split {
+  background: transparent !important;
+  z-index: 1 !important;
+  transition: background 0.15s !important;
+}
+
+.mosaic-split:hover,
+.mosaic-split.-dragging {
+  background: var(--accent) !important;
+  opacity: 0.4 !important;
+}
+
+/* ============================================================
+   Weather Widget  (.wx-*)
+   ============================================================ */
+
+.wx {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 16px;
+  overflow: hidden;
+  background: var(--bg-panel);
+}
+
+/* Centred utility for loading / error states */
+.wx--center {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Loading spinner */
+.wx-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: wx-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes wx-spin {
+  to { transform: rotate(360deg); }
+}
+
+.wx-muted {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.wx-retry {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 4px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.wx-retry:hover {
+  background: var(--border);
+}
+
+/* ── Header ── */
+.wx-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.wx-location {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.wx-city {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.wx-region {
+  color: var(--text-secondary);
+}
+
+.wx-controls {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.wx-unit {
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px 3px;
+  border-radius: 3px;
+  transition: color 0.1s;
+  line-height: 1;
+}
+
+.wx-unit--on {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.wx-sep {
+  font-size: 11px;
+  color: var(--border);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.wx-refresh {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px 4px;
+  margin-left: 4px;
+  border-radius: 3px;
+  line-height: 1;
+  transition: color 0.1s, transform 0.2s;
+}
+
+.wx-refresh:hover {
+  color: var(--text-primary);
+  transform: rotate(45deg);
+}
+
+/* ── Current conditions ── */
+.wx-current {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding-bottom: 12px;
+}
+
+.wx-emoji {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.wx-temp {
+  font-size: 60px;
+  font-weight: 200;
+  line-height: 1;
+  color: var(--text-primary);
+  letter-spacing: -3px;
+}
+
+.wx-condition {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.wx-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+.wx-dot {
+  opacity: 0.4;
+}
+
+/* ── 5-day forecast ── */
+.wx-forecast {
+  display: flex;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  flex-shrink: 0;
+}
+
+.wx-day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0 2px;
+  border-right: 1px solid var(--border);
+}
+
+.wx-day:last-child {
+  border-right: none;
+}
+
+.wx-day-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wx-day-emoji {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.wx-day-hi {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.wx-day-lo {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1;
+}
+
+.wx-day-precip {
+  font-size: 10px;
+  color: var(--accent);
+  line-height: 1;
+}

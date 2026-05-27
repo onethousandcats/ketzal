@@ -1,0 +1,195 @@
+/* ============================================================
+   Ketzal Theme System
+   All components read exclusively from these CSS custom
+   properties — no hardcoded color values anywhere in the UI.
+   ============================================================ */
+
+:root[data-theme="light"] {
+  /* Surfaces */
+  --bg-app: #f0f0f0;
+  --bg-panel: #fafafa;
+  --bg-toolbar: #f0f0f0;
+  --border: rgba(0, 0, 0, 0.07);
+  /* Text */
+  --text-primary: #1a1a1a;
+  --text-secondary: #888888;
+  /* Accent */
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  /* Shadows — light feel, subtle depth */
+  --shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-panel-hover: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+  /* Terminal — GitHub Light */
+  --terminal-bg: #ffffff;
+  --terminal-fg: #24292e;
+  --terminal-cursor: #044289;
+  --terminal-selection: rgba(4, 66, 137, 0.15);
+  --terminal-black: #586069;
+  --terminal-red: #d73a49;
+  --terminal-green: #28a745;
+  --terminal-yellow: #b08800;
+  --terminal-blue: #0366d6;
+  --terminal-magenta: #6f42c1;
+  --terminal-cyan: #1b7c83;
+  --terminal-white: #d1d5da;
+  --terminal-bright-black: #959da5;
+  --terminal-bright-red: #cb2431;
+  --terminal-bright-green: #22863a;
+  --terminal-bright-yellow: #735c0f;
+  --terminal-bright-blue: #005cc5;
+  --terminal-bright-magenta: #5a32a3;
+  --terminal-bright-cyan: #3192aa;
+  --terminal-bright-white: #6a737d;
+}
+
+:root[data-theme="dark"] {
+  /* Surfaces — lifted to a proper dark gray (was near-black) */
+  --bg-app: #1c1c1f;
+  --bg-panel: #28282d;
+  --bg-toolbar: #1c1c1f;
+  --border: rgba(255, 255, 255, 0.08);
+  /* Text */
+  --text-primary: #e4e4e7;
+  --text-secondary: #71717a;
+  /* Accent */
+  --accent: #818cf8;
+  --accent-hover: #6366f1;
+  /* Shadows */
+  --shadow-panel: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.25);
+  --shadow-panel-hover: 0 8px 40px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  /* Terminal — Catppuccin Mocha (matches panel bg) */
+  --terminal-bg: #28282d;
+  --terminal-fg: #cdd6f4;
+  --terminal-cursor: #f5c2e7;
+  --terminal-selection: rgba(205, 214, 244, 0.12);
+  --terminal-black: #45475a;
+  --terminal-red: #f38ba8;
+  --terminal-green: #a6e3a1;
+  --terminal-yellow: #f9e2af;
+  --terminal-blue: #89b4fa;
+  --terminal-magenta: #cba6f7;
+  --terminal-cyan: #89dceb;
+  --terminal-white: #bac2de;
+  --terminal-bright-black: #585b70;
+  --terminal-bright-red: #f38ba8;
+  --terminal-bright-green: #a6e3a1;
+  --terminal-bright-yellow: #f9e2af;
+  --terminal-bright-blue: #89b4fa;
+  --terminal-bright-magenta: #cba6f7;
+  --terminal-bright-cyan: #89dceb;
+  --terminal-bright-white: #a6adc8;
+}
+
+:root[data-theme="solarized"] {
+  /* Surfaces */
+  --bg-app: #e8e1cc;
+  --bg-panel: #fdf6e3;
+  --bg-toolbar: #e8e1cc;
+  --border: rgba(0, 0, 0, 0.08);
+  /* Text */
+  --text-primary: #586e75;
+  --text-secondary: #93a1a1;
+  /* Accent */
+  --accent: #268bd2;
+  --accent-hover: #1a72b3;
+  /* Shadows */
+  --shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-panel-hover: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.07);
+  /* Terminal — Solarized Light (matches panel bg) */
+  --terminal-bg: #fdf6e3;
+  --terminal-fg: #657b83;
+  --terminal-cursor: #268bd2;
+  --terminal-selection: rgba(38, 139, 210, 0.2);
+  --terminal-black: #073642;
+  --terminal-red: #dc322f;
+  --terminal-green: #859900;
+  --terminal-yellow: #b58900;
+  --terminal-blue: #268bd2;
+  --terminal-magenta: #d33682;
+  --terminal-cyan: #2aa198;
+  --terminal-white: #eee8d5;
+  --terminal-bright-black: #657b83;
+  --terminal-bright-red: #cb4b16;
+  --terminal-bright-green: #586e75;
+  --terminal-bright-yellow: #839496;
+  --terminal-bright-blue: #93a1a1;
+  --terminal-bright-magenta: #6c71c4;
+  --terminal-bright-cyan: #93a1a1;
+  --terminal-bright-white: #fdf6e3;
+}
+
+:root[data-theme="light-blue"] {
+  /* Surfaces */
+  --bg-app: #d6e9f8;
+  --bg-panel: #e8f4fd;
+  --bg-toolbar: #d6e9f8;
+  --border: rgba(0, 80, 160, 0.1);
+  /* Text */
+  --text-primary: #0f2d48;
+  --text-secondary: #4a7a9b;
+  /* Accent */
+  --accent: #0078d4;
+  --accent-hover: #005ea2;
+  /* Shadows */
+  --shadow-panel: 0 4px 20px rgba(0, 80, 180, 0.1), 0 1px 4px rgba(0, 80, 180, 0.06);
+  --shadow-panel-hover: 0 8px 32px rgba(0, 80, 180, 0.15), 0 2px 6px rgba(0, 80, 180, 0.08);
+  /* Terminal — light blue (matches panel bg) */
+  --terminal-bg: #e8f4fd;
+  --terminal-fg: #0f2d48;
+  --terminal-cursor: #0078d4;
+  --terminal-selection: rgba(0, 120, 212, 0.2);
+  --terminal-black: #1e3a5f;
+  --terminal-red: #c0392b;
+  --terminal-green: #27ae60;
+  --terminal-yellow: #d68910;
+  --terminal-blue: #1a5276;
+  --terminal-magenta: #7d3c98;
+  --terminal-cyan: #1a7b8a;
+  --terminal-white: #aed6f1;
+  --terminal-bright-black: #2e86c1;
+  --terminal-bright-red: #e74c3c;
+  --terminal-bright-green: #2ecc71;
+  --terminal-bright-yellow: #f39c12;
+  --terminal-bright-blue: #3498db;
+  --terminal-bright-magenta: #9b59b6;
+  --terminal-bright-cyan: #1abc9c;
+  --terminal-bright-white: #5d6d7e;
+}
+
+:root[data-theme="lime-green"] {
+  /* Surfaces — washed-out lime green, light theme */
+  --bg-app: #e8f4cc;
+  --bg-panel: #f4fbe3;
+  --bg-toolbar: #e8f4cc;
+  --border: rgba(60, 100, 20, 0.1);
+  /* Text */
+  --text-primary: #1a2e08;
+  --text-secondary: #5a8030;
+  /* Accent */
+  --accent: #65a30d;
+  --accent-hover: #4d7c0f;
+  /* Shadows */
+  --shadow-panel: 0 4px 20px rgba(60, 100, 20, 0.08), 0 1px 3px rgba(60, 100, 20, 0.05);
+  --shadow-panel-hover: 0 8px 32px rgba(60, 100, 20, 0.13), 0 2px 6px rgba(60, 100, 20, 0.07);
+  /* Terminal — matches panel bg */
+  --terminal-bg: #f4fbe3;
+  --terminal-fg: #1a2e08;
+  --terminal-cursor: #65a30d;
+  --terminal-selection: rgba(101, 163, 13, 0.18);
+  --terminal-black: #2d4a1a;
+  --terminal-red: #c0392b;
+  --terminal-green: #3d7a0f;
+  --terminal-yellow: #b8860b;
+  --terminal-blue: #1a6ba8;
+  --terminal-magenta: #7b3a9e;
+  --terminal-cyan: #1a7a6e;
+  --terminal-white: #8aad50;
+  --terminal-bright-black: #4a7030;
+  --terminal-bright-red: #e74c3c;
+  --terminal-bright-green: #5aad1a;
+  --terminal-bright-yellow: #d4a017;
+  --terminal-bright-blue: #2980b9;
+  --terminal-bright-magenta: #9b59b6;
+  --terminal-bright-cyan: #27ae9e;
+  --terminal-bright-white: #4a6030;
+}
