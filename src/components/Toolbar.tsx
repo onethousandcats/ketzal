@@ -11,6 +11,8 @@ const WIDGET_OPTIONS: { type: WidgetType; label: string; icon: string }[] = [
   { type: 'weather',  label: 'Weather',  icon: '⛅' },
   { type: 'pomodoro', label: 'Pomodoro', icon: '🍅' },
   { type: 'todo',     label: 'To-do',    icon: '✓' },
+  { type: 'matrix',   label: 'Matrix',   icon: '⬛' },
+  { type: 'stats',    label: 'CPU Stats', icon: '📊' },
 ]
 
 export default function Toolbar({ onAddTerminal, onAddWidget }: ToolbarProps) {

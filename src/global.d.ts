@@ -23,6 +23,16 @@ interface ElectronAPI {
     maximize: () => void
     close: () => void
   }
+  stats: {
+    onUpdate: (cb: (data: StatsData) => void) => () => void
+  }
+}
+
+interface StatsData {
+  cpu: number
+  cores: number[]
+  memUsed: number
+  memTotal: number
 }
 
 declare global {

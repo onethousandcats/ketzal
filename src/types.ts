@@ -1,1 +1,1 @@
-export type WidgetType = 'weather' | 'pomodoro' | 'todo'
+export type WidgetType = 'weather' | 'pomodoro' | 'todo' | 'matrix' | 'stats'

@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell, session, Menu, dialog } from 'electron'
 import { join } from 'path'
+import * as os from 'os'
 import * as pty from 'node-pty'
 import Store from 'electron-store'
 
@@ -40,6 +41,7 @@ function createWindow(): void {
     minHeight: 600,
     show: false,
     frame: false,
+    icon: join(__dirname, '../../resources/icon.png'),
     backgroundColor: '#f5f5f5',
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -184,6 +186,41 @@ ipcMain.on('window:close', (event) => {
 // App lifecycle
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// CPU / memory stats broadcaster
+// ---------------------------------------------------------------------------
+
+let prevCpus = os.cpus()
+
+function sampleStats() {
+  const currCpus = os.cpus()
+
+  const cores = currCpus.map((core, i) => {
+    const p = prevCpus[i].times
+    const c = core.times
+    const pTotal = (Object.values(p) as number[]).reduce((a, b) => a + b, 0)
+    const cTotal = (Object.values(c) as number[]).reduce((a, b) => a + b, 0)
+    const total = cTotal - pTotal
+    return total === 0 ? 0 : Math.round((1 - (c.idle - p.idle) / total) * 100)
+  })
+
+  prevCpus = currCpus
+
+  const memTotal = os.totalmem()
+  const memUsed  = memTotal - os.freemem()
+
+  return {
+    cpu:      Math.round(cores.reduce((a, b) => a + b, 0) / cores.length),
+    cores,
+    memUsed,
+    memTotal,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// App lifecycle
+// ---------------------------------------------------------------------------
+
 app.whenReady().then(() => {
   // Remove the default application menu (File / Edit / View / …)
   Menu.setApplicationMenu(null)
@@ -198,9 +235,19 @@ app.whenReady().then(() => {
 
   createWindow()
 
+  // Push CPU/memory stats to all renderer windows every second
+  const statsTimer = setInterval(() => {
+    const wins = BrowserWindow.getAllWindows()
+    if (wins.length === 0) return
+    const data = sampleStats()
+    wins.forEach(w => { if (!w.isDestroyed()) w.webContents.send('stats:update', data) })
+  }, 1000)
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  app.on('before-quit', () => clearInterval(statsTimer))
 })
 
 app.on('window-all-closed', () => {

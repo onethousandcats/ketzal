@@ -143,18 +143,33 @@ export default function WeatherWidget() {
     // Try the browser Geolocation API first (granted by the Electron
     // permission handler in main). Fall back to IP-based location if it
     // fails or is unavailable.
+    // Try IP-based geolocation services in order until one works
     const tryIpFallback = async () => {
-      try {
-        const res = await fetch('https://ipapi.co/json/')
-        const data = await res.json()
-        if (data.latitude && data.longitude) {
-          await fetchWeather(data.latitude, data.longitude)
-        } else {
-          setState({ status: 'error', error: 'Could not determine location' })
-        }
-      } catch {
-        setState({ status: 'error', error: 'Could not determine location' })
+      const services = [
+        async () => {
+          const d = await fetch('https://ipwho.is/').then(r => r.json())
+          if (d.success && d.latitude && d.longitude) return { lat: d.latitude, lon: d.longitude }
+          return null
+        },
+        async () => {
+          const d = await fetch('https://freeipapi.com/api/json').then(r => r.json())
+          if (d.latitude && d.longitude) return { lat: d.latitude, lon: d.longitude }
+          return null
+        },
+        async () => {
+          const d = await fetch('https://ipapi.co/json/').then(r => r.json())
+          if (d.latitude && d.longitude) return { lat: d.latitude, lon: d.longitude }
+          return null
+        },
+      ]
+
+      for (const svc of services) {
+        try {
+          const coords = await svc()
+          if (coords) { await fetchWeather(coords.lat, coords.lon); return }
+        } catch { /* try next */ }
       }
+      setState({ status: 'error', error: 'Could not determine location' })
     }
 
     if (!navigator.geolocation) {
@@ -164,8 +179,8 @@ export default function WeatherWidget() {
 
     navigator.geolocation.getCurrentPosition(
       ({ coords: { latitude: lat, longitude: lon } }) => fetchWeather(lat, lon),
-      () => tryIpFallback(),   // permission denied or unavailable → use IP
-      { timeout: 8000 }
+      () => tryIpFallback(),
+      { timeout: 10000 }
     )
   }, [fetchWeather])
 

@@ -1,5 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+interface StatsData {
+  cpu: number
+  cores: number[]
+  memUsed: number
+  memTotal: number
+}
+
 contextBridge.exposeInMainWorld('electronAPI', {
   terminal: {
     create: (cols: number, rows: number): Promise<string> =>
@@ -42,5 +49,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
     minimize: (): void => ipcRenderer.send('window:minimize'),
     maximize: (): void => ipcRenderer.send('window:maximize'),
     close:    (): void => ipcRenderer.send('window:close'),
+  },
+
+  stats: {
+    onUpdate: (cb: (data: StatsData) => void): (() => void) => {
+      const listener = (_e: Electron.IpcRendererEvent, data: StatsData) => cb(data)
+      ipcRenderer.on('stats:update', listener)
+      return () => ipcRenderer.removeListener('stats:update', listener)
+    }
   }
 })
