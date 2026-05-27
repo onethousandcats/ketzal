@@ -1,9 +1,18 @@
+import type { WidgetType } from '../types'
 import WeatherWidget from './WeatherWidget'
+import PomodoroWidget from './PomodoroWidget'
+import TodoWidget from './TodoWidget'
 
-export default function WidgetPane() {
+interface WidgetPaneProps {
+  widgetType: WidgetType
+}
+
+export default function WidgetPane({ widgetType }: WidgetPaneProps) {
   return (
     <div className="widget-pane">
-      <WeatherWidget />
+      {widgetType === 'weather'  && <WeatherWidget />}
+      {widgetType === 'pomodoro' && <PomodoroWidget />}
+      {widgetType === 'todo'     && <TodoWidget />}
     </div>
   )
 }

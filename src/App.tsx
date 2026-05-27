@@ -11,6 +11,7 @@ import { ThemeProvider } from './components/ThemeProvider'
 import Toolbar from './components/Toolbar'
 import TerminalPane from './components/TerminalPane'
 import WidgetPane from './components/WidgetPane'
+import type { WidgetType } from './types'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -22,6 +23,7 @@ interface PaneConfig {
   id: string
   type: PaneType
   title: string
+  widgetType?: WidgetType
 }
 
 // ---------------------------------------------------------------------------
@@ -64,11 +66,11 @@ export default function App() {
   const [panes, setPanes] = useState<Map<string, PaneConfig>>(new Map())
 
   // ----- Add a new pane to the layout -----
-  const addPane = useCallback((type: PaneType) => {
+  const addPane = useCallback((type: PaneType, widgetType?: WidgetType) => {
     const id = nextId()
-    const title = type === 'terminal' ? 'terminal' : 'weather'
+    const title = type === 'terminal' ? 'terminal' : (widgetType ?? 'weather')
 
-    setPanes((prev) => new Map(prev).set(id, { id, type, title }))
+    setPanes((prev) => new Map(prev).set(id, { id, type, title, widgetType }))
     setLayout((prev) => {
       if (prev === null) return id
       return {
@@ -81,7 +83,7 @@ export default function App() {
   }, [])
 
   const addTerminal = useCallback(() => addPane('terminal'), [addPane])
-  const addWidget = useCallback(() => addPane('widget'), [addPane])
+  const addWidget = useCallback((wt: WidgetType) => addPane('widget', wt), [addPane])
 
   // ----- Update pane title (from terminal OSC sequences) -----
   const updatePaneTitle = useCallback((id: string, title: string) => {
@@ -146,7 +148,8 @@ export default function App() {
             const newPane: PaneConfig = {
               id: newId,
               type: pane.type,
-              title: pane.type === 'terminal' ? 'Terminal' : 'Widget'
+              title: pane.type === 'terminal' ? 'terminal' : (pane.widgetType ?? 'weather'),
+              widgetType: pane.widgetType
             }
             setPanes((prev) => new Map(prev).set(newId, newPane))
             return newId
@@ -166,7 +169,7 @@ export default function App() {
           {pane.type === 'terminal' ? (
             <TerminalPane paneId={id} onTitleChange={(t) => updatePaneTitle(id, t)} />
           ) : (
-            <WidgetPane />
+            <WidgetPane widgetType={pane.widgetType ?? 'weather'} />
           )}
         </MosaicWindow>
       )
