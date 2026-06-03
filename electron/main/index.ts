@@ -97,6 +97,7 @@ ipcMain.handle('terminal:create', (event, cols: number, rows: number) => {
 
   ptyProcess.onData((data) => {
     // Guard: the window may have closed before the process exits
+    if (event.sender.isDestroyed()) return
     const win = BrowserWindow.fromWebContents(event.sender)
     if (win && !win.isDestroyed()) {
       win.webContents.send(`terminal:output:${id}`, data)
@@ -105,6 +106,7 @@ ipcMain.handle('terminal:create', (event, cols: number, rows: number) => {
 
   ptyProcess.onExit(() => {
     terminals.delete(id)
+    if (event.sender.isDestroyed()) return
     const win = BrowserWindow.fromWebContents(event.sender)
     if (win && !win.isDestroyed()) {
       win.webContents.send(`terminal:exit:${id}`)
